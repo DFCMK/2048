@@ -7,6 +7,7 @@ let tiles = [];
 
 function initializeGame(){
     tiles = [];
+    board.innerHTML = '';
     
     for (let i= 0; i < 16; i++){
         let tile = document.createElement("div");
@@ -16,7 +17,21 @@ function initializeGame(){
         tiles.push(tile);
         board.appendChild(tile);
     }
+
+    addRandomTile();
+    updateBoard();
 }
+
+function addRandomTile(){
+    const emptyTiles = tiles.filter(tile => tile.dataset.value == 0);
+
+    if (emptyTiles.length == 0) return;
+
+    const randomTile = emptyTiles(Math.floor(Math.random() * emptyTiles.length))
+    randomTile.dataset.value = Math.random() < 0.9 ? 2 : 4;
+}
+
+function updateBoard(){}
 
 initializeGame();
 restartButton.addEventListener("click", initializeGame);
