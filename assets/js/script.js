@@ -31,7 +31,16 @@ function addRandomTile(){
     randomTile.dataset.value = Math.random() < 0.9 ? 2 : 4;
 }
 
-function updateBoard(){}
+function updateBoard(){
+    tiles.forEach(tile => {
+        const value = parseInt(tile.dataset.value);
+        tile.textContent = value > 0 ? value : '';
+        tile.className = 'tile';
+        if (value > 0) tile.classList.add(`tile-${value}`)
+    })
+
+    scoreDisplay.textContent = score;
+}
 
 initializeGame();
 restartButton.addEventListener("click", initializeGame);
