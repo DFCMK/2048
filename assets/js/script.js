@@ -27,7 +27,7 @@ function addRandomTile(){
 
     if (emptyTiles.length == 0) return;
 
-    const randomTile = emptyTiles(Math.floor(Math.random() * emptyTiles.length))
+    const randomTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)]
     randomTile.dataset.value = Math.random() < 0.9 ? 2 : 4;
 }
 
@@ -41,6 +41,87 @@ function updateBoard(){
 
     scoreDisplay.textContent = score;
 }
+
+function move(direction){
+    let moved = false;
+
+    // console.log(`\nMoving: ${direction}`);
+
+    for(let i=0; i<4; i++){
+        let line = [];
+
+        // console.log(`\nprocessing ${direction == "up" || direction == "down" ? "column" : "row"} ${i}`);
+
+        for(let j=0; j<4; j++){
+        const index = direction == "up" || direction == "down"? i+j*4: j+i*4;
+        const value = parseInt(tiles[index].dataset.value);
+        if(value!==0) line.push(value);
+    }
+    // console.log(`Original line: ${line}`);
+
+    if(direction == "right" || direction == "down"){
+        line.reverse();
+    }
+
+    let mergedLine = mergeLine(line);
+    if(direction == "right" || direction == "down"){
+        mergedLine.reverse();
+    }
+
+    for(let j=0; j<4; j++){
+        const index = direction == "up" || direction == "down"? i+j*4: j+i*4;
+        const newValue = mergeLine[j] || 0;
+
+        if(tiles[index].dataset.value != newValue){
+            tiles[index].dataset.value = newValue;
+            moved = true;
+        }
+    }
+
+
+    }
+
+    if(moved){
+        // console.log("Move successful, adding a new tile");
+        addRandomTile();
+        updateBoard();
+    }
+    else{
+        console.log("No tiles moved");
+    }
+}
+
+function mergeLine(line){
+    for(let i = 0; i < line.length -1; i++){
+        if(line[i] === line[i + 1]){
+            line[i] *= 2;
+            score += line[i];
+            line.splice(i + 1, 1);
+        }
+    }
+    while(line.length < 4){
+        line.push(0);
+    }
+    return line;
+}
+
+document.addEventListener("keydown", (e)=>{
+    switch(e.key){
+        case "ArrowUp":
+            move("up");
+            break;
+        case "ArrowDown":
+            move("down");
+            break;
+        case "ArrowLeft":
+            move("left");
+            break;
+        case "ArrowRight":
+            move("right");
+            break;
+    }
+})
+
 
 initializeGame();
 restartButton.addEventListener("click", initializeGame);
